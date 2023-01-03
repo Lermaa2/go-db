@@ -1,5 +1,9 @@
 package main
 
+// go mod init github.com/Lermaa2/github.com/Lermaa2/go-db
+// go build main.go
+// ./main
+
 import (
 	"fmt"
 )
