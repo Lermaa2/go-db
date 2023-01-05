@@ -2,9 +2,9 @@ package product
 
 import "time"
 
-// Modelo de producto
-type Model struct {
-	ID           uint // 	PK, incrementador
+// Product representa un producto
+type Product struct {
+	ID           uint // PK, incrementador
 	Name         string
 	Observations string
 	Price        int
@@ -12,12 +12,13 @@ type Model struct {
 	UpdatedAt    time.Time
 }
 
-// Slices de Model (registros)
-type Models []*Model
+// ProductList es una lista de productos
+type ProductList []*Product
 
-// 			----	Interfaces		-----
-type Storage interface {
-	Migrate() error
+// ProductStorage es una interfaz que define la funcionalidad necesaria para almacenar y gestionar productos en una base de datos
+type DBKeeper interface {
+	// Migrate crea la tabla de productos en la base de datos
+	CreateTable() error
 
 	//Create(*Model) error
 	//Update(*Model) error
@@ -27,16 +28,17 @@ type Storage interface {
 	//GetAll() (*Models, error)
 }
 
-// Servicios de product
-type Service struct {
-	storage Storage
+// DataManager proporciona una capa de abstracción para interactuar con la base de datos de productos
+type DBHandler struct {
+	storage DBKeeper
 }
 
-func NewService(s Storage) *Service {
-	return &Service{s} // Retorna puntero de servicio.
+// NewDBHandler crea una nueva instancia de DBHandler
+func NewDBHandler(s DBKeeper) *DBHandler {
+	return &DBHandler{s}
 }
 
-// Migrate usado para migrar product...
-func (s *Service) Migrate() error {
-	return s.storage.Migrate()
+// CreateTable ejecuta la creacion de la tabla productos en la base de datos
+func (s *DBHandler) CreateTable() error {
+	return s.storage.CreateTable()
 }

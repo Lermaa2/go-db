@@ -16,14 +16,16 @@ import (
 func main() {
 	fmt.Println("\n	--	GO DATABASE	--")
 
-	// Crear coneccion con base de datos PostgreSQL
-	storage.NewPostgresDB()
+	// ConnectToPostgresDB se encarga de establecer una conexión a la base de datos
+	storage.ConnectToPostgresDB()
 
 	// Crear instancia que maneja Producto
-	storageProduct := storage.NewPsqlsProduct(storage.Pool())
-	serviceProduct := product.NewService(storageProduct)
+	storageProduct := storage.NewPsqlsProduct(storage.GetDB())
+	//
+	serviceProduct := product.NewDBHandler(storageProduct)
+	fmt.Printf("%T,%+v", serviceProduct, serviceProduct)
 
-	if err := serviceProduct.Migrate(); err != nil {
+	if err := serviceProduct.CreateTable(); err != nil {
 		log.Fatalf("product.Migrate: %v", err)
 	}
 }
