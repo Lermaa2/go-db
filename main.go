@@ -30,15 +30,15 @@ func main() {
 	}
 
 	// Crear instancia que maneja InvoiceHeader
-	InvoiceHeaderTb := database.NewPsqlInvoiceHeader(DB)
-	InvoiceHeaderHandler := invoiceheader.NewDBHandler(InvoiceHeaderTb)
+	PsqlInvoiceHeade := database.NewPsqlInvoiceHeader(DB)
+	InvoiceHeaderHandler := invoiceheader.NewDBHandler(PsqlInvoiceHeade)
 	if err := InvoiceHeaderHandler.MigrateTable(); err != nil {
 		log.Fatalf("InvoiceHeaderHandler.MigrateTable: %v", err)
 	}
 
 	// Crear instancia que maneja InvoiceItem
-	InvoiceItemTb := database.NewPsqlInvoiceItem(DB)
-	InvoiceItemHandler := invoiceitem.NewDBHandler(InvoiceItemTb)
+	PsqlInvoiceItem := database.NewPsqlInvoiceItem(DB)
+	InvoiceItemHandler := invoiceitem.NewDBHandler(PsqlInvoiceItem)
 	if err := InvoiceItemHandler.MigrateTable(); err != nil {
 		log.Fatalf("InvoiceItemHandler.MigrateTable: %v", err)
 	}
