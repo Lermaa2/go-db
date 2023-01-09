@@ -2,43 +2,34 @@ package product
 
 import "time"
 
-// Product representa un producto
+// Product representa un producto con sus atributos
 type Product struct {
-	ID           uint // PK, incrementador
-	Name         string
-	Observations string
-	Price        int
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           uint        // ID es la clave primaria del producto y se incrementa automáticamente
+	Name         string      // Name es el nombre del producto
+	Observations string      // Observations es un campo opcional para almacenar observaciones adicionales sobre el producto
+	Price        int         // Price es el precio del producto en unidades monetarias
+	CreatedAt    time.Time   // CreatedAt es la fecha de creación del producto
+	UpdatedAt    []time.Time // UpdatedAt es un slice de fechas que registra cada vez que se actualiza el producto
 }
 
-// ProductList es una lista de productos
+// ProductList es un slice de punteros a Product
 type ProductList []*Product
 
-// ProductStorage es una interfaz que define la funcionalidad necesaria para almacenar y gestionar productos en una base de datos
+// DBKeeper es una interface que describe las operaciones que se pueden realizar sobre una tabla de productos en una base de datos
 type DBKeeper interface {
-	// Migrate crea la tabla de productos en la base de datos
-	CreateTable() error
-
-	//Create(*Model) error
-	//Update(*Model) error
-	//Delete(*Model) error
-
-	//GetByID(uint) error
-	//GetAll() (*Models, error)
+	// CreateTable crea la tabla de productos en la base de datos si aún no existe
+	MigrateTable() error
 }
 
-// DataManager proporciona una capa de abstracción para interactuar con la base de datos de productos
+// DBHandler es una estructura que mantiene una referencia a una implementación de DBKeeper
 type DBHandler struct {
-	storage DBKeeper
+	dbKeeper DBKeeper
 }
 
-// NewDBHandler crea una nueva instancia de DBHandler
 func NewDBHandler(s DBKeeper) *DBHandler {
 	return &DBHandler{s}
 }
 
-// CreateTable ejecuta la creacion de la tabla productos en la base de datos
-func (s *DBHandler) CreateTable() error {
-	return s.storage.CreateTable()
+func (s *DBHandler) MigrateTable() error {
+	return s.dbKeeper.MigrateTable()
 }
