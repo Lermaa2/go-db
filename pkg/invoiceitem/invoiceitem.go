@@ -1,6 +1,9 @@
 package invoiceitem
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 // Modelo de invoiceitem
 type Invoiceitem struct {
@@ -11,10 +14,13 @@ type Invoiceitem struct {
 	UpdatedAt       []time.Time
 }
 
+type InvoiceitemList []*Invoiceitem
+
 // DBKeeper es una interface que describe las operaciones que se pueden realizar sobre una tabla de productos en una base de datos
 type DBKeeper interface {
-	// CreateTable crea la tabla de productos en la base de datos si aún no existe
+	// CreateTable crea la tabla de Invoiceitem en la base de datos si aún no existe
 	MigrateTable() error
+	CreateTx(*sql.Tx, uint, InvoiceitemList) error
 }
 
 // DBHandler es una estructura que mantiene una referencia a una implementación de DBKeeper

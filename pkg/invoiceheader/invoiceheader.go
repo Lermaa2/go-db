@@ -1,6 +1,9 @@
 package invoiceheader
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 // Modelo de invoiceheader
 type Invoiceheader struct {
@@ -14,6 +17,7 @@ type Invoiceheader struct {
 type DBKeeper interface {
 	// CreateTable crea la tabla de productos en la base de datos si aún no existe
 	MigrateTable() error
+	CreateTx(*sql.Tx, *Invoiceheader) error
 }
 
 // DBHandler es una estructura que mantiene una referencia a una implementación de DBKeeper

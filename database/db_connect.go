@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	_ "github.com/lib/pq" // paquete del driver para PostgreSQL
 )
@@ -39,4 +40,20 @@ func ConnectToDB() {
 // DBPointer devuelve un puntero a la conexión a la base de datos
 func DBPointer() *sql.DB {
 	return DB
+}
+
+// Helpers
+func stringToNull(s string) sql.NullString {
+	null := sql.NullString{String: s}
+	if null.String != "" {
+		null.Valid = true
+	}
+	return null
+}
+func timeToNull(t time.Time) sql.NullTime {
+	null := sql.NullTime{Time: t}
+	if !null.Time.IsZero() {
+		null.Valid = true
+	}
+	return null
 }
