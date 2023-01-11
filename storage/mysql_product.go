@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/AJRDRGZ/go-db/pkg/product"
+	"github.com/Lermaa2/go-db/pkg/product"
 )
 
 const (

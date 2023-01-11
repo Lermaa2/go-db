@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/AJRDRGZ/go-db/pkg/invoice"
-	"github.com/AJRDRGZ/go-db/pkg/invoiceheader"
-	"github.com/AJRDRGZ/go-db/pkg/invoiceitem"
+	"github.com/Lermaa2/go-db/pkg/invoice"
+	"github.com/Lermaa2/go-db/pkg/invoiceheader"
+	"github.com/Lermaa2/go-db/pkg/invoiceitem"
 )
 
 // MySQLInvoice used for work with MySQL - invoice

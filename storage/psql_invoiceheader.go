@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/AJRDRGZ/go-db/pkg/invoiceheader"
+	"github.com/Lermaa2/go-db/pkg/invoiceheader"
 )
 
 const (

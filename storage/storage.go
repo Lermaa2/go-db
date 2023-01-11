@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AJRDRGZ/go-db/pkg/product"
+	"github.com/Lermaa2/go-db/pkg/product"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )

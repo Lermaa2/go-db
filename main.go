@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/AJRDRGZ/go-db/pkg/product"
-	"github.com/AJRDRGZ/go-db/storage"
+	"github.com/Lermaa2/go-db/pkg/product"
+	"github.com/Lermaa2/go-db/storage"
 )
 
 func main() {

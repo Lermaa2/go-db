@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ErrIDNotFound = errors.New("El producto no contiene un ID")
+	ErrIDNotFound = errors.New("el producto no contiene un ID")
 )
 
 // Model of product
