@@ -68,7 +68,7 @@ func (p *PsqlProduct) MigrateTable() error {
 }
 
 // Implementa interfaz de DBKeeper con consulta psqlCreateProduct
-func (p *PsqlProduct) Create(m *product.Product) error {
+func (p *PsqlProduct) Create(m *product.Model) error {
 
 	stmt, err := p.db.Prepare(psqlCreateProduct)
 	if err != nil {
@@ -94,8 +94,8 @@ type scanner interface {
 	Scan(dest ...any) error
 }
 
-func scanRowProduct(s scanner) (*product.Product, error) {
-	m := &product.Product{}
+func scanRowProduct(s scanner) (*product.Model, error) {
+	m := &product.Model{}
 	// Nulls handling
 	observationNull := sql.NullString{}
 	updateAtNull := sql.NullTime{}
@@ -110,7 +110,7 @@ func scanRowProduct(s scanner) (*product.Product, error) {
 		&updateAtNull,
 	)
 	if err != nil {
-		return &product.Product{}, err
+		return &product.Model{}, err
 	}
 
 	m.Observations = observationNull.String
@@ -149,11 +149,11 @@ func (p *PsqlProduct) GetAll() (product.ProductList, error) {
 }
 
 // Implementa interfaz de DBKeeper con SQL para retornar todo
-func (p *PsqlProduct) GetByID(id uint) (*product.Product, error) {
+func (p *PsqlProduct) GetByID(id uint) (*product.Model, error) {
 
 	stmt, err := p.db.Prepare(psqlGetProductByID)
 	if err != nil {
-		return &product.Product{}, err
+		return &product.Model{}, err
 	}
 	defer stmt.Close()
 
@@ -161,7 +161,7 @@ func (p *PsqlProduct) GetByID(id uint) (*product.Product, error) {
 }
 
 // Implementa interfaz de DBKeeper con SQL para Actualizar registro
-func (p *PsqlProduct) Update(m *product.Product) error {
+func (p *PsqlProduct) Update(m *product.Model) error {
 	stm, err := p.db.Prepare(psqlUpdateProduct)
 	if err != nil {
 		return err

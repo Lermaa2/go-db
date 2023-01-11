@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
+
+	"github.com/Lermaa2/github.com/Lermaa2/go-db/pkg/invoiceheader"
 )
 
 // Best Practice: usar Const para definir las Queries a usar
@@ -17,6 +19,7 @@ const (
 		
 		CONSTRAINT invoice_header_id_pk PRIMARY KEY(id) 
 		);`
+	psqlCreateInvoiceHeader = `INSERT INTO invoice_headers(client) VALUES($1) RETURNING id, created_at`
 
 // Solo acepta “
 )
@@ -44,4 +47,14 @@ func (p *PsqlInvoiceHeader) MigrateTable() error {
 
 	fmt.Println("	- Migración de InvoiceHeader ejecutada correctamente")
 	return nil
+}
+
+func (p *PsqlInvoiceHeader) CreateTx(tx *sql.Tx, m *invoiceheader.Invoiceheader) error {
+	stmt, err := tx.Prepare(psqlCreateInvoiceHeader)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	return stmt.QueryRow(m.Client).Scan(&m.ID, &m.CreatedAt)
 }

@@ -9,7 +9,7 @@ import (
 
 // -
 // Product representa un producto con sus atributos
-type Product struct {
+type Model struct {
 	ID           uint      // ID es la clave primaria del producto y se incrementa automáticamente
 	Name         string    // Name es el nombre del producto
 	Observations string    // Observations es un campo opcional para almacenar observaciones adicionales sobre el producto
@@ -19,14 +19,14 @@ type Product struct {
 }
 
 // Solo para visualziacion
-func (m *Product) String() string {
+func (m *Model) String() string {
 	return fmt.Sprintf("%02d | %-20s | %-60s | %5v | %10s | %10s",
 		m.ID, m.Name, m.Observations, m.Price,
 		m.CreatedAt.Format("2006-01-02"), m.UpdatedAt.Format("2006-01-02"))
 }
 
 // ProductList es un slice de punteros a Product
-type ProductList []*Product
+type ProductList []*Model
 
 func (m ProductList) String() string {
 	builder := strings.Builder{}
@@ -43,12 +43,12 @@ func (m ProductList) String() string {
 type DBKeeper interface {
 	// CreateTable crea la tabla de productos en la base de datos si aún no existe
 	MigrateTable() error
-	Create(*Product) error
+	Create(*Model) error
 
 	GetAll() (ProductList, error)
-	GetByID(uint) (*Product, error)
+	GetByID(uint) (*Model, error)
 
-	Update(*Product) error
+	Update(*Model) error
 
 	Delete(uint) error
 }
@@ -69,7 +69,7 @@ func (s *DBHandler) MigrateTable() error {
 }
 
 // Crear un producto
-func (s *DBHandler) Create(m *Product) error {
+func (s *DBHandler) Create(m *Model) error {
 	m.CreatedAt = time.Now()
 	return s.dbKeeper.Create(m)
 }
@@ -80,14 +80,14 @@ func (s *DBHandler) GetAll() (ProductList, error) {
 }
 
 // -
-func (s *DBHandler) GetByID(id uint) (*Product, error) {
+func (s *DBHandler) GetByID(id uint) (*Model, error) {
 	return s.dbKeeper.GetByID(id)
 }
 
 // -
 var ErrIDNonFound = errors.New("el producto no contiene un ID")
 
-func (s *DBHandler) Update(m *Product) error {
+func (s *DBHandler) Update(m *Model) error {
 	if m.ID == 0 {
 		return ErrIDNonFound
 	}
