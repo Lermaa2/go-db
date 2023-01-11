@@ -7,30 +7,32 @@ import (
 	"time"
 )
 
-// -
-// Product representa un producto con sus atributos
+var (
+	ErrIDNotFound = errors.New("El producto no contiene un ID")
+)
+
+// Model of product
 type Model struct {
-	ID           uint      // ID es la clave primaria del producto y se incrementa automáticamente
-	Name         string    // Name es el nombre del producto
-	Observations string    // Observations es un campo opcional para almacenar observaciones adicionales sobre el producto
-	Price        int       // Price es el precio del producto en unidades monetarias
-	CreatedAt    time.Time // CreatedAt es la fecha de creación del producto
-	UpdatedAt    time.Time // UpdatedAt es un slice de fechas que registra cada vez que se actualiza el producto
+	ID           uint
+	Name         string
+	Observations string
+	Price        int
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
-// Solo para visualziacion
 func (m *Model) String() string {
-	return fmt.Sprintf("%02d | %-20s | %-60s | %5v | %10s | %10s",
+	return fmt.Sprintf("%02d | %-20s | %-20s | %5d | %10s | %10s",
 		m.ID, m.Name, m.Observations, m.Price,
 		m.CreatedAt.Format("2006-01-02"), m.UpdatedAt.Format("2006-01-02"))
 }
 
-// ProductList es un slice de punteros a Product
-type ProductList []*Model
+// Models slice of Model
+type Models []*Model
 
-func (m ProductList) String() string {
+func (m Models) String() string {
 	builder := strings.Builder{}
-	builder.WriteString(fmt.Sprintf("%02s | %-20s | %-60s | %5s | %10s | %10s\n",
+	builder.WriteString(fmt.Sprintf("%02s | %-20s | %-20s | %5s | %10s | %10s\n",
 		"id", "name", "observations", "price", "created_at", "updated_at"))
 	for _, model := range m {
 		builder.WriteString(model.String() + "\n")
@@ -38,67 +40,58 @@ func (m ProductList) String() string {
 	return builder.String()
 }
 
-// -
-// DBKeeper es una interface que describe las operaciones que se pueden realizar sobre una tabla de productos en una base de datos
-type DBKeeper interface {
-	// CreateTable crea la tabla de productos en la base de datos si aún no existe
-	MigrateTable() error
+// Storage interface that must implement a db storage
+type Storage interface {
+	Migrate() error
 	Create(*Model) error
-
-	GetAll() (ProductList, error)
-	GetByID(uint) (*Model, error)
-
 	Update(*Model) error
-
+	GetAll() (Models, error)
+	GetByID(uint) (*Model, error)
 	Delete(uint) error
 }
 
-// -
-// DBHandler es una estructura que mantiene una referencia a una implementación de DBKeeper
-type DBHandler struct {
-	dbKeeper DBKeeper
+// Service of product
+type Service struct {
+	storage Storage
 }
 
-func NewDBHandler(s DBKeeper) *DBHandler {
-	return &DBHandler{s}
+// NewService return a pointer of Service
+func NewService(s Storage) *Service {
+	return &Service{s}
 }
 
-// Migrar tabla a PostgreSQL
-func (s *DBHandler) MigrateTable() error {
-	return s.dbKeeper.MigrateTable()
+// Migrate is used for migrate product
+func (s *Service) Migrate() error {
+	return s.storage.Migrate()
 }
 
-// Crear un producto
-func (s *DBHandler) Create(m *Model) error {
+// Create is used for create a product
+func (s *Service) Create(m *Model) error {
 	m.CreatedAt = time.Now()
-	return s.dbKeeper.Create(m)
+	return s.storage.Create(m)
 }
 
-// -
-func (s *DBHandler) GetAll() (ProductList, error) {
-	return s.dbKeeper.GetAll()
+// GetAll is used for get all the products
+func (s *Service) GetAll() (Models, error) {
+	return s.storage.GetAll()
 }
 
-// -
-func (s *DBHandler) GetByID(id uint) (*Model, error) {
-	return s.dbKeeper.GetByID(id)
+// GetByID is used for get a product
+func (s *Service) GetByID(id uint) (*Model, error) {
+	return s.storage.GetByID(id)
 }
 
-// -
-var ErrIDNonFound = errors.New("el producto no contiene un ID")
-
-func (s *DBHandler) Update(m *Model) error {
+// Update is used for update a product
+func (s *Service) Update(m *Model) error {
 	if m.ID == 0 {
-		return ErrIDNonFound
+		return ErrIDNotFound
 	}
 	m.UpdatedAt = time.Now()
-	return s.dbKeeper.Update(m)
+
+	return s.storage.Update(m)
 }
 
-// -
-func (s *DBHandler) Delete(id uint) error {
-	if id == 0 {
-		return ErrIDNonFound
-	}
-	return s.dbKeeper.Delete(id)
+// Delete is used for delete a product
+func (s *Service) Delete(id uint) error {
+	return s.storage.Delete(id)
 }

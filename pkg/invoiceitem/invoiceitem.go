@@ -5,33 +5,35 @@ import (
 	"time"
 )
 
-// Modelo de invoiceitem
-type Invoiceitem struct {
-	ID              uint // 	PK, incremSentador
+// Model of invoiceitem
+type Model struct {
+	ID              uint
 	InvoiceHeaderID uint
 	ProductID       uint
 	CreatedAt       time.Time
-	UpdatedAt       []time.Time
+	UpdatedAt       time.Time
 }
 
-type InvoiceitemList []*Invoiceitem
+// Models slice of Model
+type Models []*Model
 
-// DBKeeper es una interface que describe las operaciones que se pueden realizar sobre una tabla de productos en una base de datos
-type DBKeeper interface {
-	// CreateTable crea la tabla de Invoiceitem en la base de datos si aún no existe
-	MigrateTable() error
-	CreateTx(*sql.Tx, uint, InvoiceitemList) error
+// Storage interface that must implement a db storage
+type Storage interface {
+	Migrate() error
+	CreateTx(*sql.Tx, uint, Models) error
 }
 
-// DBHandler es una estructura que mantiene una referencia a una implementación de DBKeeper
-type DBHandler struct {
-	dbKeeper DBKeeper
+// Service of invoiceitem
+type Service struct {
+	storage Storage
 }
 
-func NewDBHandler(s DBKeeper) *DBHandler {
-	return &DBHandler{s}
+// NewService return a pointer of Service
+func NewService(s Storage) *Service {
+	return &Service{s}
 }
 
-func (s *DBHandler) MigrateTable() error {
-	return s.dbKeeper.MigrateTable()
+// Migrate is used for migrate product
+func (s *Service) Migrate() error {
+	return s.storage.Migrate()
 }

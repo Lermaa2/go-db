@@ -1,27 +1,32 @@
 package invoice
 
 import (
-	"github.com/Lermaa2/github.com/Lermaa2/go-db/pkg/invoiceheader"
-	"github.com/Lermaa2/github.com/Lermaa2/go-db/pkg/invoiceitem"
+	"github.com/AJRDRGZ/go-db/pkg/invoiceheader"
+	"github.com/AJRDRGZ/go-db/pkg/invoiceitem"
 )
 
-type Invoice struct {
-	Header *invoiceheader.Invoiceheader
-	Items  invoiceitem.InvoiceitemList
+// Model of invoice
+type Model struct {
+	Header *invoiceheader.Model
+	Items  invoiceitem.Models
 }
 
-type DBKeeper interface {
-	Create(*Invoice) error
+// Storage interface that must implement a db storage
+type Storage interface {
+	Create(*Model) error
 }
 
-type DBHandler struct {
-	dbKeeper DBKeeper
+// Service of invoice
+type Service struct {
+	storage Storage
 }
 
-func NewDBHandler(s DBKeeper) *DBHandler {
-	return &DBHandler{s}
+// NewService return a pointer of Service
+func NewService(s Storage) *Service {
+	return &Service{s}
 }
 
-func (s *DBHandler) Create(m *Invoice) error {
-	return s.dbKeeper.Create(m)
+// Create a new invoice
+func (s *Service) Create(m *Model) error {
+	return s.storage.Create(m)
 }
